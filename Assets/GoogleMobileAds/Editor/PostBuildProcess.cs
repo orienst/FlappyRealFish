@@ -8,6 +8,22 @@ using System.Collections.Generic;
 
 public class PostBuildProcess
 {
+	internal static void CopyAndReplaceDirectory (string srcPath, string dstPath)
+	{
+		if (Directory.Exists (dstPath))
+			Directory.Delete (dstPath);
+		if (File.Exists (dstPath))
+			File.Delete (dstPath);
+
+		Directory.CreateDirectory (dstPath);
+
+		foreach (var file in Directory.GetFiles(srcPath))
+			File.Copy (file, Path.Combine (dstPath, Path.GetFileName (file)));
+
+		foreach (var dir in Directory.GetDirectories(srcPath))
+			CopyAndReplaceDirectory (dir, Path.Combine (dstPath, Path.GetFileName (dir)));
+	}
+
 	[PostProcessBuild]
 	public static void OnPostProcessBuild (BuildTarget buildTarget, string path)
 	{
@@ -25,6 +41,7 @@ public class PostBuildProcess
 
 		// Enable BitCode -> NO
 		pj.SetBuildProperty (target, "ENABLE_BITCODE", "NO");
+		pj.SetBuildProperty (target, "CLANG_ENABLE_MODULES", "YES");
 
 		File.WriteAllText (pjPath, pj.WriteToString ());
 
