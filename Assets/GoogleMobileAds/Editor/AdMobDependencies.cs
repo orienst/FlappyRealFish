@@ -20,10 +20,14 @@ using UnityEditor;
 [InitializeOnLoad]
 public class AdMobDependencies : AssetPostprocessor
 {
-    /// Initializes static members of the class.
-    static AdMobDependencies() { SetupDeps(); }
+	/// Initializes static members of the class.
+	static AdMobDependencies ()
+	{
+		SetupDeps ();
+	}
 
-    static void SetupDeps() {
+	static void SetupDeps ()
+	{
 #if UNITY_ANDROID
         // Setup the resolver using reflection as the module may not be
         // available at compile time.
@@ -50,31 +54,32 @@ public class AdMobDependencies : AssetPostprocessor
                         "extra-android-m2repository"} }
             });
 #elif UNITY_IOS
-        Type iosResolver = Google.VersionHandler.FindClass(
-            "Google.IOSResolver", "Google.IOSResolver");
-        if (iosResolver == null) {
-            return;
-        }
-        Google.VersionHandler.InvokeStaticMethod(
-            iosResolver, "AddPod",
-            new object[] { "Google-Mobile-Ads-SDK" },
-            namedArgs: new Dictionary<string, object>() {
-                { "version", "7.13+" }
-            });
+//        Type iosResolver = Google.VersionHandler.FindClass(
+//            "Google.IOSResolver", "Google.IOSResolver");
+//        if (iosResolver == null) {
+//            return;
+//        }
+//        Google.VersionHandler.InvokeStaticMethod(
+//            iosResolver, "AddPod",
+//            new object[] { "Google-Mobile-Ads-SDK" },
+//            namedArgs: new Dictionary<string, object>() {
+//                { "version", "7.13+" }
+//            });
 #endif  // UNITY_IOS
-    }
+	}
 
-    // Handle delayed loading of the dependency resolvers.
-    private static void OnPostprocessAllAssets(
-            string[] importedAssets, string[] deletedAssets,
-            string[] movedAssets, string[] movedFromPath) {
-        foreach (string asset in importedAssets) {
-            if (asset.Contains("IOSResolver") ||
-                asset.Contains("JarResolver")) {
-                SetupDeps();
-                break;
-            }
-        }
-    }
+	// Handle delayed loading of the dependency resolvers.
+	private static void OnPostprocessAllAssets (
+		string[] importedAssets, string[] deletedAssets,
+		string[] movedAssets, string[] movedFromPath)
+	{
+		foreach (string asset in importedAssets) {
+			if (asset.Contains ("IOSResolver") ||
+			             asset.Contains ("JarResolver")) {
+				SetupDeps ();
+				break;
+			}
+		}
+	}
 }
 
