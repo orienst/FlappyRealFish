@@ -49,8 +49,8 @@ PluginImporter:
     iOS:
       enabled: 1
       settings:
-        CompileFlags: 
-        FrameworkDependencies: CoreTelephony;StoreKit;EventKit;EventKitUI;MessageUI;
+        CompileFlags: -fno-objc-arc
+        FrameworkDependencies: AdSupport;CoreTelephony;StoreKit;EventKit;EventKitUI;MessageUI;
   userData: 
   assetBundleName: 
   assetBundleVariant: 
