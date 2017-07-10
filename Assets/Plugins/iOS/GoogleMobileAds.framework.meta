@@ -49,7 +49,7 @@ PluginImporter:
     iOS:
       enabled: 1
       settings:
-        CompileFlags: -fno-objc-arc
+        CompileFlags: 
         FrameworkDependencies: AdSupport;CoreTelephony;StoreKit;EventKit;EventKitUI;MessageUI;
   userData: 
   assetBundleName: 
