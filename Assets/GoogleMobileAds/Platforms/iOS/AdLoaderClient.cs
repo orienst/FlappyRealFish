@@ -20,21 +20,23 @@ using System.Runtime.InteropServices;
 
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
-using UnityEngine;
 
 namespace GoogleMobileAds.iOS
 {
+    [StructLayout(LayoutKind.Sequential),Serializable]
+    // The System.Boolean (bool in C#) type is special. A bool within a structure is marshaled in a different format
+    // than when passed as an argument to a function (4-byte integer vs 2-byte integer, non zero = true vs -1 = true).
+    // Using ints instead for simplicity.
     public struct NativeAdTypes
     {
-        public bool CustomTemplateAd;
-        public bool AppInstallAd;
-        public bool ContentAd;
+        public int CustomTemplateAd;
     }
 
-    internal class AdLoaderClient : IAdLoaderClient, IDisposable
+    public class AdLoaderClient : IAdLoaderClient, IDisposable
     {
         private IntPtr adLoaderPtr;
         private IntPtr adLoaderClientPtr;
+        private NativeAdTypes adTypes;
 
         private Dictionary<string, Action<CustomNativeTemplateAd, string>>
             customNativeTemplateCallbacks;
@@ -47,10 +49,10 @@ namespace GoogleMobileAds.iOS
             string[] templateIdsArray = new string[unityAdLoader.TemplateIds.Count];
             unityAdLoader.TemplateIds.CopyTo(templateIdsArray);
 
-            NativeAdTypes adTypes = new NativeAdTypes();
+            this.adTypes = new NativeAdTypes();
             if (unityAdLoader.AdTypes.Contains(NativeAdType.CustomTemplate))
             {
-                adTypes.CustomTemplateAd = true;
+                adTypes.CustomTemplateAd = 1;
             }
 
             this.AdLoaderPtr = Externs.GADUCreateAdLoader(
@@ -124,12 +126,15 @@ namespace GoogleMobileAds.iOS
                     client.customNativeTemplateCallbacks.ContainsKey(templateID) ?
                     client.customNativeTemplateCallbacks[templateID] : null;
 
-            CustomNativeEventArgs args = new CustomNativeEventArgs()
+            if (client.OnCustomNativeTemplateAdLoaded != null)
             {
-                nativeAd = new CustomNativeTemplateAd(new CustomNativeTemplateClient(
-                    nativeCustomTemplateAd, clickHandler))
-            };
-            client.OnCustomNativeTemplateAdLoaded(client, args);
+                CustomNativeEventArgs args = new CustomNativeEventArgs()
+                {
+                    nativeAd = new CustomNativeTemplateAd(new CustomNativeTemplateClient(
+                        nativeCustomTemplateAd, clickHandler))
+                };
+                client.OnCustomNativeTemplateAdLoaded(client, args);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUAdLoaderDidFailToReceiveAdWithErrorCallback))]
@@ -137,11 +142,14 @@ namespace GoogleMobileAds.iOS
             IntPtr adLoader, string error)
         {
             AdLoaderClient client = IntPtrToAdLoaderClient(adLoader);
-            AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+            if (client.OnAdFailedToLoad != null)
             {
-                Message = error
-            };
-            client.OnAdFailedToLoad(client, args);
+                AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+                {
+                    Message = error
+                };
+                client.OnAdFailedToLoad(client, args);
+            }
         }
 
         private static AdLoaderClient IntPtrToAdLoaderClient(IntPtr adLoader)

@@ -26,12 +26,14 @@ namespace GoogleMobileAds.Android
     public class AdLoaderClient : AndroidJavaProxy, IAdLoaderClient
     {
         private AndroidJavaObject adLoader;
-        private Dictionary<string, Action<CustomNativeTemplateAd, string>>
-                CustomNativeTemplateCallbacks { get; set; }
+        private Dictionary<string, Action<CustomNativeTemplateAd, string>> CustomNativeTemplateCallbacks
+        {
+            get; set;
+        }
         public event EventHandler<AdFailedToLoadEventArgs> OnAdFailedToLoad;
         public event EventHandler<CustomNativeEventArgs> OnCustomNativeTemplateAdLoaded;
 
-        public AdLoaderClient(AdLoader unityAdLoader) : base(Utils.UnityCustomNativeAdListener)
+        public AdLoaderClient(AdLoader unityAdLoader) : base(Utils.UnityAdLoaderListenerClassName)
         {
             AndroidJavaClass playerClass = new AndroidJavaClass(Utils.UnityActivityClassName);
             AndroidJavaObject activity =
@@ -59,15 +61,20 @@ namespace GoogleMobileAds.Android
 
         public void onCustomTemplateAdLoaded(AndroidJavaObject ad)
         {
-            CustomNativeEventArgs args = new CustomNativeEventArgs() {
-                nativeAd = new CustomNativeTemplateAd(new CustomNativeTemplateClient(ad))
-            };
-            OnCustomNativeTemplateAdLoaded(this, args);
+            if (this.OnCustomNativeTemplateAdLoaded != null)
+            {
+                CustomNativeEventArgs args = new CustomNativeEventArgs()
+                {
+                    nativeAd = new CustomNativeTemplateAd(new CustomNativeTemplateClient(ad))
+                };
+                this.OnCustomNativeTemplateAdLoaded(this, args);
+            }
         }
 
         void onAdFailedToLoad(string errorReason)
         {
-            AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs() {
+            AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+            {
                 Message = errorReason
             };
             OnAdFailedToLoad(this, args);

@@ -24,7 +24,7 @@ using GoogleMobileAds.Common;
 
 namespace GoogleMobileAds.iOS
 {
-    internal class InterstitialClient : IInterstitialClient, IDisposable
+    public class InterstitialClient : IInterstitialClient, IDisposable
     {
         private IntPtr interstitialPtr;
         private IntPtr interstitialClientPtr;
@@ -50,8 +50,6 @@ namespace GoogleMobileAds.iOS
         public event EventHandler<AdFailedToLoadEventArgs> OnAdFailedToLoad;
 
         public event EventHandler<EventArgs> OnAdOpening;
-
-        public event EventHandler<EventArgs> OnAdClosing;
 
         public event EventHandler<EventArgs> OnAdClosed;
 
@@ -125,16 +123,6 @@ namespace GoogleMobileAds.iOS
             this.Dispose();
         }
 
-        public void SetDefaultInAppPurchaseProcessor(IDefaultInAppPurchaseProcessor processor)
-        {
-            // iOS currently does not support in-app purchase ads.
-        }
-
-        public void SetCustomInAppPurchaseProcessor(ICustomInAppPurchaseProcessor processor)
-        {
-            // iOS currently does not support in-app purchase ads.
-        }
-
         #endregion
 
         #region Interstitial callback methods
@@ -143,7 +131,10 @@ namespace GoogleMobileAds.iOS
         private static void InterstitialDidReceiveAdCallback(IntPtr interstitialClient)
         {
             InterstitialClient client = IntPtrToInterstitialClient(interstitialClient);
-            client.OnAdLoaded(client, EventArgs.Empty);
+            if (client.OnAdLoaded != null)
+            {
+                client.OnAdLoaded(client, EventArgs.Empty);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUInterstitialDidFailToReceiveAdWithErrorCallback))]
@@ -151,32 +142,44 @@ namespace GoogleMobileAds.iOS
                 IntPtr interstitialClient, string error)
         {
             InterstitialClient client = IntPtrToInterstitialClient(interstitialClient);
-            AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+            if (client.OnAdFailedToLoad != null)
             {
-                Message = error
-            };
-            client.OnAdFailedToLoad(client, args);
+                AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+                {
+                    Message = error
+                };
+                client.OnAdFailedToLoad(client, args);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUInterstitialWillPresentScreenCallback))]
         private static void InterstitialWillPresentScreenCallback(IntPtr interstitialClient)
         {
             InterstitialClient client = IntPtrToInterstitialClient(interstitialClient);
-            client.OnAdOpening(client, EventArgs.Empty);
+            if (client.OnAdOpening != null)
+            {
+                client.OnAdOpening(client, EventArgs.Empty);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUInterstitialDidDismissScreenCallback))]
         private static void InterstitialDidDismissScreenCallback(IntPtr interstitialClient)
         {
             InterstitialClient client = IntPtrToInterstitialClient(interstitialClient);
-            client.OnAdClosed(client, EventArgs.Empty);
+            if (client.OnAdClosed != null)
+            {
+                client.OnAdClosed(client, EventArgs.Empty);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUInterstitialWillLeaveApplicationCallback))]
         private static void InterstitialWillLeaveApplicationCallback(IntPtr interstitialClient)
         {
             InterstitialClient client = IntPtrToInterstitialClient(interstitialClient);
-            client.OnAdLeavingApplication(client, EventArgs.Empty);
+            if (client.OnAdLeavingApplication != null)
+            {
+                client.OnAdLeavingApplication(client, EventArgs.Empty);
+            }
         }
 
         private static InterstitialClient IntPtrToInterstitialClient(IntPtr interstitialClient)

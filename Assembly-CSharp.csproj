@@ -61,6 +61,7 @@
      <Compile Include="Assets\GoogleMobileAds\Api\IDefaultInAppPurchaseProcessor.cs" />
      <Compile Include="Assets\GoogleMobileAds\Api\IInAppPurchaseResult.cs" />
      <Compile Include="Assets\GoogleMobileAds\Api\InterstitialAd.cs" />
+     <Compile Include="Assets\GoogleMobileAds\Api\Mediation\MediationExtras.cs" />
      <Compile Include="Assets\GoogleMobileAds\Api\NativeExpressAdView.cs" />
      <Compile Include="Assets\GoogleMobileAds\Api\Reward.cs" />
      <Compile Include="Assets\GoogleMobileAds\Api\RewardBasedVideoAd.cs" />
@@ -106,6 +107,8 @@
      <Compile Include="Assets\ZSmartTile\Classes\ZST_MapManager.cs" />
      <Compile Include="Assets\ZSmartTile\Components\ZST_SmartTile.cs" />
      <Compile Include="Assets\ZSmartTile\Components\ZST_SnapToGrid.cs" />
+     <None Include="Assets\PlayServicesResolver\proguard-messaging-workaround.txt" />
+     <None Include="Assets\PlayServicesResolver\proguard-unity.txt" />
      <None Include="Assets\PlayServicesResolver\Editor\play-services-resolver.txt" />
      <None Include="Assets\Plugins\Pixelplacement\iTween\ReadMe!\ReadMe!.txt" />
      <None Include="Assets\Plugins\Android\GoogleMobileAdsPlugin\AndroidManifest.xml" />

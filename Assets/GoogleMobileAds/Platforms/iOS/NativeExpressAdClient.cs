@@ -23,23 +23,27 @@ using GoogleMobileAds.Common;
 
 namespace GoogleMobileAds.iOS
 {
-    internal class NativeExpressAdClient : IDisposable, INativeExpressAdClient
+    public class NativeExpressAdClient : IDisposable, INativeExpressAdClient
     {
         private IntPtr nativeExpressAdViewPtr;
         private IntPtr nativeExpressAdClientPtr;
 
         #region Native Express Ad callback types
 
-        internal delegate void GADUNativeExpressAdViewDidReceiveAdCallback(IntPtr nativeExpressAdClient);
+        internal delegate void GADUNativeExpressAdViewDidReceiveAdCallback(
+            IntPtr nativeExpressAdClient);
 
         internal delegate void GADUNativeExpressAdViewDidFailToReceiveAdWithErrorCallback(
             IntPtr nativeExpressAdClient, string error);
 
-        internal delegate void GADUNativeExpressAdViewWillPresentScreenCallback(IntPtr nativeExpressAdClient);
+        internal delegate void GADUNativeExpressAdViewWillPresentScreenCallback(
+            IntPtr nativeExpressAdClient);
 
-        internal delegate void GADUNativeExpressAdViewDidDismissScreenCallback(IntPtr nativeExpressAdClient);
+        internal delegate void GADUNativeExpressAdViewDidDismissScreenCallback(
+            IntPtr nativeExpressAdClient);
 
-        internal delegate void GADUNativeExpressAdViewWillLeaveApplicationCallback(IntPtr nativeExpressAdClient);
+        internal delegate void GADUNativeExpressAdViewWillLeaveApplicationCallback(
+            IntPtr nativeExpressAdClient);
 
         #endregion
 
@@ -79,11 +83,35 @@ namespace GoogleMobileAds.iOS
 
             Externs.GADUSetNativeExpressAdCallbacks(
                     this.NativeExpressAdViewPtr,
-                    this.NativeExpressAdViewDidReceiveAdCallback,
-                    this.NativeExpressAdViewDidFailToReceiveAdWithErrorCallback,
-                    this.NativeExpressAdViewWillPresentScreenCallback,
-                    this.NativeExpressAdViewDidDismissScreenCallback,
-                    this.NativeExpressAdViewWillLeaveApplicationCallback);
+                    NativeExpressAdViewDidReceiveAdCallback,
+                    NativeExpressAdViewDidFailToReceiveAdWithErrorCallback,
+                    NativeExpressAdViewWillPresentScreenCallback,
+                    NativeExpressAdViewDidDismissScreenCallback,
+                    NativeExpressAdViewWillLeaveApplicationCallback);
+        }
+
+        public void CreateNativeExpressAdView(
+            string adUnitId,
+            AdSize adSize,
+            int x,
+            int y)
+        {
+            nativeExpressAdClientPtr = (IntPtr)GCHandle.Alloc(this);
+            this.NativeExpressAdViewPtr = Externs.GADUCreateNativeExpressAdViewWithCustomPosition(
+                nativeExpressAdClientPtr,
+                adUnitId,
+                adSize.Width,
+                adSize.Height,
+                x,
+                y);
+
+            Externs.GADUSetNativeExpressAdCallbacks(
+                this.NativeExpressAdViewPtr,
+                NativeExpressAdViewDidReceiveAdCallback,
+                NativeExpressAdViewDidFailToReceiveAdWithErrorCallback,
+                NativeExpressAdViewWillPresentScreenCallback,
+                NativeExpressAdViewDidDismissScreenCallback,
+                NativeExpressAdViewWillLeaveApplicationCallback);
         }
 
         // Loads an ad.
@@ -132,7 +160,10 @@ namespace GoogleMobileAds.iOS
         private static void NativeExpressAdViewDidReceiveAdCallback(IntPtr nativeExpressClient)
         {
             NativeExpressAdClient client = IntPtrToNativeExpressAdClient(nativeExpressClient);
-            client.OnAdLoaded(client, EventArgs.Empty);
+            if(client.OnAdLoaded != null)
+            {
+                client.OnAdLoaded(client, EventArgs.Empty);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUNativeExpressAdViewDidFailToReceiveAdWithErrorCallback))]
@@ -140,32 +171,44 @@ namespace GoogleMobileAds.iOS
             IntPtr nativeExpressClient, string error)
         {
             NativeExpressAdClient client = IntPtrToNativeExpressAdClient(nativeExpressClient);
-            AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+            if(client.OnAdFailedToLoad != null)
             {
-                Message = error
-            };
-            client.OnAdFailedToLoad(client, args);
+                AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+                {
+                    Message = error
+                };
+                client.OnAdFailedToLoad(client, args);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUNativeExpressAdViewWillPresentScreenCallback))]
         private static void NativeExpressAdViewWillPresentScreenCallback(IntPtr nativeExpressClient)
         {
             NativeExpressAdClient client = IntPtrToNativeExpressAdClient(nativeExpressClient);
-            client.OnAdOpening(client, EventArgs.Empty);
+            if(client.OnAdOpening != null)
+            {
+                client.OnAdOpening(client, EventArgs.Empty);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUNativeExpressAdViewDidDismissScreenCallback))]
         private static void NativeExpressAdViewDidDismissScreenCallback(IntPtr nativeExpressClient)
         {
             NativeExpressAdClient client = IntPtrToNativeExpressAdClient(nativeExpressClient);
-            client.OnAdClosed(client, EventArgs.Empty);
+            if(client.OnAdClosed != null)
+            {
+                client.OnAdClosed(client, EventArgs.Empty);
+            }
         }
 
         [MonoPInvokeCallback(typeof(GADUNativeExpressAdViewWillLeaveApplicationCallback))]
         private static void NativeExpressAdViewWillLeaveApplicationCallback(IntPtr nativeExpressClient)
         {
             NativeExpressAdClient client = IntPtrToNativeExpressAdClient(nativeExpressClient);
-            client.OnAdLeavingApplication(client, EventArgs.Empty);
+            if(client.OnAdLeavingApplication != null)
+            {
+                client.OnAdLeavingApplication(client, EventArgs.Empty);
+            }
         }
 
         private static NativeExpressAdClient IntPtrToNativeExpressAdClient(IntPtr nativeExpressAdClient)

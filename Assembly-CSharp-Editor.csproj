@@ -49,6 +49,8 @@
      <Compile Include="Assets\GoogleMobileAds\Editor\PostBuildProcess.cs" />
      <Compile Include="Assets\SocialConnector\Editor\SocialConnectorPostProcess.cs" />
      <Compile Include="Assets\ZSmartTile\Editor\ZST_Editor.cs" />
+     <None Include="Assets\PlayServicesResolver\proguard-messaging-workaround.txt" />
+     <None Include="Assets\PlayServicesResolver\proguard-unity.txt" />
      <None Include="Assets\PlayServicesResolver\Editor\play-services-resolver.txt" />
      <None Include="Assets\Plugins\Pixelplacement\iTween\ReadMe!\ReadMe!.txt" />
      <None Include="Assets\Plugins\Android\GoogleMobileAdsPlugin\AndroidManifest.xml" />

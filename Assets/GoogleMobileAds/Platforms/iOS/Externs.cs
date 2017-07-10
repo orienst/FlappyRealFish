@@ -28,6 +28,21 @@ namespace GoogleMobileAds.iOS
         internal static extern IntPtr GADUCreateRequest();
 
         [DllImport("__Internal")]
+        internal static extern IntPtr GADUCreateMutableDictionary();
+
+        [DllImport("__Internal")]
+        internal static extern void GADUMutableDictionarySetValue(
+                IntPtr mutableDictionaryPtr,
+                string key,
+                string value);
+
+        [DllImport("__Internal")]
+        internal static extern void GADUSetMediationExtras(
+                IntPtr request,
+                IntPtr mutableDictionaryPtr,
+                string adNetworkExtrasClassName);
+
+        [DllImport("__Internal")]
         internal static extern void GADUAddTestDevice(IntPtr request, string deviceId);
 
         [DllImport("__Internal")]
@@ -61,8 +76,21 @@ namespace GoogleMobileAds.iOS
                 IntPtr bannerClient, string adUnitId, int width, int height, int positionAtTop);
 
         [DllImport("__Internal")]
+        internal static extern IntPtr GADUCreateBannerViewWithCustomPosition(
+            IntPtr bannerClient,
+            string adUnitId,
+            int width,
+            int height,
+            int x,
+            int y);
+
+        [DllImport("__Internal")]
         internal static extern IntPtr GADUCreateSmartBannerView(
                 IntPtr bannerClient, string adUnitId, int positionAtTop);
+
+        [DllImport("__Internal")]
+        internal static extern IntPtr GADUCreateSmartBannerViewWithCustomPosition(
+            IntPtr bannerClient, string adUnitId, int x, int y);
 
         [DllImport("__Internal")]
         internal static extern void GADUSetBannerCallbacks(
@@ -213,6 +241,15 @@ namespace GoogleMobileAds.iOS
             IntPtr nativeExpressClient, string adUnitId, int width, int height, int positionAtTop);
 
         [DllImport("__Internal")]
+        internal static extern IntPtr GADUCreateNativeExpressAdViewWithCustomPosition(
+            IntPtr bannerClient,
+            string adUnitId,
+            int width,
+            int height,
+            int x,
+            int y);
+
+        [DllImport("__Internal")]
         internal static extern void GADUSetNativeExpressAdCallbacks(
             IntPtr bannerView,
             NativeExpressAdClient.GADUNativeExpressAdViewDidReceiveAdCallback adReceivedCallback,
@@ -234,6 +271,7 @@ namespace GoogleMobileAds.iOS
         internal static extern void GADURequestNativeExpressAd(IntPtr nativeExpresAdView, IntPtr request);
 
         #endregion
+
     }
 }
 

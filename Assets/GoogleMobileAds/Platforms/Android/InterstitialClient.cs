@@ -15,7 +15,6 @@
 #if UNITY_ANDROID
 
 using System;
-using System.Collections.Generic;
 
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
@@ -23,7 +22,7 @@ using UnityEngine;
 
 namespace GoogleMobileAds.Android
 {
-    internal class InterstitialClient : AndroidJavaProxy, IInterstitialClient
+    public class InterstitialClient : AndroidJavaProxy, IInterstitialClient
     {
         private AndroidJavaObject interstitial;
 
@@ -78,51 +77,52 @@ namespace GoogleMobileAds.Android
             this.interstitial.Call("destroy");
         }
 
-        // Sets IDefaultInAppPurchaseProcessor as PlayStorePurchaseListener on interstital ad.
-        public void SetDefaultInAppPurchaseProcessor(IDefaultInAppPurchaseProcessor processor)
-        {
-            DefaultInAppPurchaseListener listener = new DefaultInAppPurchaseListener(processor);
-            this.interstitial.Call("setPlayStorePurchaseParams", listener, processor.AndroidPublicKey);
-        }
-
-        // Sets ICustomInAppPurchaseProcessor as PlayStorePurchaseListener on interstital ad.
-        public void SetCustomInAppPurchaseProcessor(ICustomInAppPurchaseProcessor processor)
-        {
-            CustomInAppPurchaseListener listener = new CustomInAppPurchaseListener(processor);
-            this.interstitial.Call("setInAppPurchaseListener", listener);
-        }
-
         #endregion
 
         #region Callbacks from UnityInterstitialAdListener.
 
         public void onAdLoaded()
         {
-            this.OnAdLoaded(this, EventArgs.Empty);
+            if (this.OnAdLoaded != null)
+            {
+                this.OnAdLoaded(this, EventArgs.Empty);
+            }
         }
 
         public void onAdFailedToLoad(string errorReason)
         {
-            AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+            if (this.OnAdFailedToLoad != null)
             {
-                Message = errorReason
-            };
-            this.OnAdFailedToLoad(this, args);
+                AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+                {
+                    Message = errorReason
+                };
+                this.OnAdFailedToLoad(this, args);
+            }
         }
 
         public void onAdOpened()
         {
-            this.OnAdOpening(this, EventArgs.Empty);
+            if (this.OnAdOpening != null)
+            {
+                this.OnAdOpening(this, EventArgs.Empty);
+            }
         }
 
         public void onAdClosed()
         {
-            this.OnAdClosed(this, EventArgs.Empty);
+            if (this.OnAdClosed != null)
+            {
+                this.OnAdClosed(this, EventArgs.Empty);
+            }
         }
 
         public void onAdLeftApplication()
         {
-            this.OnAdLeavingApplication(this, EventArgs.Empty);
+            if (this.OnAdLeavingApplication != null)
+            {
+                this.OnAdLeavingApplication(this, EventArgs.Empty);
+            }
         }
 
         #endregion

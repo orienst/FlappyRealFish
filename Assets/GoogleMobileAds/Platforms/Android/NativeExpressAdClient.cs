@@ -15,7 +15,6 @@
 #if UNITY_ANDROID
 
 using System;
-using System.Collections.Generic;
 
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
@@ -23,7 +22,7 @@ using UnityEngine;
 
 namespace GoogleMobileAds.Android
 {
-    internal class NativeExpressAdClient : AndroidJavaProxy, INativeExpressAdClient
+    public class NativeExpressAdClient : AndroidJavaProxy, INativeExpressAdClient
     {
         private AndroidJavaObject nativeExpressAdView;
 
@@ -52,6 +51,14 @@ namespace GoogleMobileAds.Android
             this.nativeExpressAdView.Call(
                     "create",
                     new object[3] { adUnitId, Utils.GetAdSizeJavaObject(adSize), (int)position });
+        }
+
+        // Creates a native express ad view with a custom position
+        public void CreateNativeExpressAdView(string adUnitId, AdSize adSize, int x, int y)
+        {
+            this.nativeExpressAdView.Call(
+                "create",
+                new object[4] { adUnitId, Utils.GetAdSizeJavaObject(adSize), x, y });
         }
 
         // Loads an ad.
@@ -88,31 +95,46 @@ namespace GoogleMobileAds.Android
 
         public void onAdLoaded()
         {
-            this.OnAdLoaded(this, EventArgs.Empty);
+            if (this.OnAdLoaded != null)
+            {
+                this.OnAdLoaded(this, EventArgs.Empty);
+            }
         }
 
         public void onAdFailedToLoad(string errorReason)
         {
-            AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+            if (this.OnAdFailedToLoad != null)
             {
-                Message = errorReason
-            };
-            this.OnAdFailedToLoad(this, args);
+                AdFailedToLoadEventArgs args = new AdFailedToLoadEventArgs()
+                {
+                    Message = errorReason
+                };
+                this.OnAdFailedToLoad(this, args);
+            }
         }
 
         public void onAdOpened()
         {
-            this.OnAdOpening(this, EventArgs.Empty);
+            if (this.OnAdOpening != null)
+            {
+                this.OnAdOpening(this, EventArgs.Empty);
+            }
         }
 
         public void onAdClosed()
         {
-            this.OnAdClosed(this, EventArgs.Empty);
+            if (this.OnAdClosed != null)
+            {
+                this.OnAdClosed(this, EventArgs.Empty);
+            }
         }
 
         public void onAdLeftApplication()
         {
-            this.OnAdLeavingApplication(this, EventArgs.Empty);
+            if (this.OnAdLeavingApplication != null)
+            {
+                this.OnAdLeavingApplication(this, EventArgs.Empty);
+            }
         }
 
         #endregion

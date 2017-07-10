@@ -1,6 +1,7 @@
 // Copyright 2016 Google Inc. All Rights Reserved.
 
 @import Foundation;
+@import UIKit;
 
 #import "GADUTypes.h"
 
@@ -12,6 +13,11 @@
 /// Position view in the bounds of the parent view, corresponding to the adPosition.
 + (void)positionView:(UIView *)view
       inParentBounds:(CGRect)parentBounds
-      withAdPosition:(GADAdPosition)adPosition;
+          adPosition:(GADAdPosition)adPosition;
+
+/// Position view in the bounds of the parent view, corresponding to the CGPoint.
++ (void)positionView:(UIView *)view
+      inParentBounds:(CGRect)parentBounds
+      customPosition:(CGPoint)adPosition;
 
 @end
