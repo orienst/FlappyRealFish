@@ -32,7 +32,7 @@ public class TitleController : MonoBehaviour
 	public void Start ()
 	{
 		//AdMob表示
-		adMob.RequestBanner ();
+//		adMob.RequestBanner ();
 		//保存データ初期化(デバッグ時使用)
 //		PlayerPrefs.DeleteAll ();
 		gameController.ClearScore ();

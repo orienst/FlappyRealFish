@@ -484,29 +484,30 @@ public class GameController : MonoBehaviour
 	/// </summary>
 	public void ShowAd ()
 	{
-		if (Advertisement.IsReady ()) {
-			isAdShow = true;
-			Advertisement.Show ("", new ShowOptions {
-				resultCallback = result => {
-					switch (result) {
-					case ShowResult.Finished:
-						//終了
-						isAdShow = false;
-						break;
-					case ShowResult.Skipped:
-						//スキップ
-						isAdShow = false;
-						break;
-					case ShowResult.Failed:
-						//失敗
-						Debug.LogError ("The ad failed to be shown.");
-						isAdShow = false;
-						Application.Quit ();        //終了処理
-						break;
-					}
-				}
-			});
-		}
+		isAdShow = false;
+//		if (Advertisement.IsReady ()) {
+//			isAdShow = true;
+//			Advertisement.Show ("", new ShowOptions {
+//				resultCallback = result => {
+//					switch (result) {
+//					case ShowResult.Finished:
+//						//終了
+//						isAdShow = false;
+//						break;
+//					case ShowResult.Skipped:
+//						//スキップ
+//						isAdShow = false;
+//						break;
+//					case ShowResult.Failed:
+//						//失敗
+//						Debug.LogError ("The ad failed to be shown.");
+//						isAdShow = false;
+//						Application.Quit ();        //終了処理
+//						break;
+//					}
+//				}
+//			});
+//		}
 	}
 
 	/// <summary>
