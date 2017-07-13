@@ -77,12 +77,12 @@ namespace SocialConnector
 				//ゲーム中のスコアを表示
 				score = gameController.GetScore ();
 			}
-			text = "[FlappyRealFish]で、スコア：" + score.ToString ("F1") + "m を達成しました！";
+			text = "FlappyRealFishで、スコア：" + score.ToString ("F1") + "m を達成しました！";
 			//プラットフォームごとにアプリURLを設定
 			if (Application.platform == RuntimePlatform.Android) {
-				URL = "AndroidURL";
+				URL = "https://play.google.com/store/apps/details?id=jp.co.orienst.flappy_real_fish";
 			} else if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				URL = "IPhonePlayerURL";
+				URL = "https://itunes.apple.com/jp/app/flappyrealfish/id1258427395?mt=8&ign-mpt=uo%3D4";
 			} else {
 				URL = "OtherURL";
 			}
